@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+    <h1>{{h1}}</h1>
+
+    <button class="btnAdd" v-on:click.stop.prevent="create()">+</button>
+    <div class="facture">
+        Facture du {{ afficheDate() }} 
+    </div>
+    
+   
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Designation</th>
+                <th>Qte</th>
+                <th>Pu Ht</th>
+                <th>TVA</th>
+                <th>P HT</th>
+                <th>P TTC</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr v-for="(i, key) in facture">
+                <!-- ID -->             <td>{{facture[key].id}}</td>
+                <!-- Designation -->    <td><input type="text"   v-on:change.stop="update(key ,facture[key].id)" v-model="facture[key].designation"></td>
+                <!-- Quantiter -->      <td><input type="number" v-on:change.stop="update(key ,facture[key].id)" v-model="facture[key].qte"></td>
+                <!-- PrixUni HT -->     <td><input type="number" v-on:change.stop="update(key ,facture[key].id)" v-model="facture[key].pu_ht"></td>
+                <!-- TVA -->            <td><input type="number" v-on:change.stop="update(key ,facture[key].id)" v-model="facture[key].tva"></td>
+                <!-- Prx TT Ht -->      <td>{{  facture[key].pu_ht * facture[key].qte }}</td>
+                <!-- Prx TTC -->        <td>{{ ((facture[key].pu_ht * facture[key].qte) * ((facture[key].tva/100)+1)).toFixed(2) }}</td>
+
+                <!-- DELETE -->         <td><button v-on:click.stop.prevent="deleteFacture(facture[key].id)">X</button></td>
+
+            </tr>   
+        </tbody>
+    </table>
+
+    <br>
+
+    <div class="total">
+        Total HT {{ prixTTHT }}<br>
+        Total TTC {{ prixTTC}}
+    </div>
+
+    <br><br>
+
+    <div class="debug">{{ facture }}</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript">
+    const apiUri = "http://localhost:3000/";
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            
+            h1 : 'Evaluation vuejs',
+            facture: [],
+        },
+
+        methods: {
+            update(key, id) {
+                data = JSON.stringify(this.facture[key]);
+                fetch(apiUri + 'factures/' + id, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: data
+                });
+            },
+
+            create() {
+                data = 
+                    JSON.stringify({
+                        "id": '',
+                        "designation": "",
+                        "qte": "",
+                        "pu_ht": 0,
+                        "tva": 0
+                    }),
+
+                fetch(apiUri + 'factures', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: data
+                });
+                this.get();
+            },
+
+            deleteFacture(id) {
+                fetch(apiUri + 'factures/' + id, {
+                    method: "DELETE"
+                });
+                this.get();
+            },
+
+            get() {
+                fetch(apiUri + 'factures', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((data) => {
+                    this.facture = data;
+                });
+            },
+
+            afficheDate() {
+                let date = new Date();
+                let n; //numero du mois
+                let j; //Lundi, mar...
+                let m; //Jannvier,fev...
+                let a; //annee
+
+                n = date.getDate();
+                
+                switch (date.getDay()) {
+                    case 0:
+                        j = 'dimanche';
+                        break;
+                    
+                    case 1:
+                        j = 'lundi';
+                        break;
+
+                    case 2:
+                        j = 'mardi';
+                        break;
+                    
+                    case 3:
+                        j = 'mercredi';
+                        break;
+                    
+                    case 4:
+                        j = 'jeudi';
+                        break;
+                    
+                    case 5:
+                        j = 'vendredi';
+                        break;
+                    
+                    case 5:
+                        j = 'samedi';
+                        break;
+        
+                    default:
+                        j = 'erreur'
+                        break;
+                }
+
+                switch (date.getMonth()) {
+                    case 0:
+                        m = 'Janvier';
+                        break;
+
+                    case 1:
+                        m = 'Février';
+                        break;
+                    
+                    case 2:
+                        m = 'Mars';
+                        break;
+                    
+                    case 3:
+                        m = 'Avril';
+                        break;
+                    
+                    case 4:
+                        m = 'Mai';
+                        break;
+                    
+                    case 5:
+                        m = 'Juin';
+                        break;
+                    
+                    case 6:
+                        m = 'Juiellet';
+                        break;
+                    
+                    case 7:
+                        m = 'Aout';
+                        break;
+                    
+                    case 8:
+                        m = 'Septembre';
+                        break;
+                    
+                    case 9:
+                        m = 'Octobre';
+                        break;
+                    
+                    case 10:
+                        m = 'Novembre';
+                        break;
+                    
+                    case 11:
+                        m = 'Décembre';
+                        break;
+                    
+
+                    default:
+                        m = 'erreur'
+                        break;
+                }
+
+                return j + " " + n + " " + m + " " + date.getUTCFullYear();
+            }
+        },
+
+        mounted: function () {
+            fetch(apiUri + 'factures', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((data) =>{
+                this.facture = data;
+                // console.log(this.facture);
+            });
+        },
+
+        computed: {
+            prixTTHT : function () {
+                let cpt = 0;
+                for (let key in this.facture) {
+                    cpt += this.facture[key].pu_ht * this.facture[key].qte;
+                }
+                return cpt;
+            },
+
+            prixTTC: function () {
+                let cpt = 0;
+                for (let key in this.facture) {
+                    cpt += ((this.facture[key].pu_ht * this.facture[key].qte) * ((this.facture[key].tva / 100) + 1));
+                }
+                return cpt.toFixed(2);
+            }
+        }
+    });
+</script>
+</body>
+</html>

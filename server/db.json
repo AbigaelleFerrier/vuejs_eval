@@ -3,20 +3,37 @@
     {
       "id": 1,
       "designation": "un avion",
-      "qte": "3",
+      "qte": "14",
       "pu_ht": 210,
-      "tva": 20,
-      "p_ht": 756,
-      "p_ttc": 907.2
+      "tva": 20
     },
     {
       "id": 2,
       "designation": "un bateau",
-      "qte": "4",
+      "qte": "7",
       "pu_ht": 20,
-      "tva": 0,
-      "p_ht": 80,
-      "p_ttc": 80
+      "tva": 0
+    },
+    {
+      "id": 6,
+      "designation": "",
+      "qte": "",
+      "pu_ht": 0,
+      "tva": 0
+    },
+    {
+      "id": 7,
+      "designation": "",
+      "qte": "",
+      "pu_ht": 0,
+      "tva": 0
+    },
+    {
+      "id": 8,
+      "designation": "",
+      "qte": "",
+      "pu_ht": 0,
+      "tva": 0
     }
   ]
 }
